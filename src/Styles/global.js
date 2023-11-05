@@ -8,8 +8,8 @@ export const GlobalStyles = createGlobalStyle`
 
 body{
 
-    background:black;
-    color:white;
+    background:${({theme})=>theme.background};
+    color:${({theme})=>theme.textColor};
     margin:0;
     padding:0;
     transition:all 0.25s linear
@@ -22,7 +22,6 @@ body{
     min-height:100vh;
     grid-auto-flow:row;
     grid-template-row:auto 1fr auto;
-    border:1px solid red;
     gap:0.5rem;
     padding:2rem;
     width:100vw;
@@ -44,6 +43,7 @@ body{
     font-size:32px;
     display:flex;
     flex-wrap:wrap;
+    color:${({theme})=>theme.typeBoxText}
 }
 
 .word{
@@ -91,6 +91,35 @@ body{
 .incorrect{
 
     color:red;
+}
+.upper-menu{
+
+    display:flex;
+    width:1000px;
+    margin-left:auto;
+    margin-right:auto;
+    font-size:1.35rem;
+    justify-content:space-between;
+    paddinng:0.5rem;
+}
+
+.modes{
+    display:flex;
+    gap:0.4rem;
+}
+
+.time-mode:hover{
+    color:green;
+    cursor:pointer;
+}
+
+.footer{
+    width:1000px;
+    display:flex;
+    justify-content:space-between;
+    margin-left:auto;
+    margin-right:auto;
+
 }
 
 `

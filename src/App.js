@@ -1,15 +1,21 @@
 import React from 'react'
 import { GlobalStyles } from './Styles/global'
 import TypingBox from './Components/TypingBox'
+import Footer from './Components/Footer'
+import { ThemeProvider } from 'styled-components'
+import { useTheme } from './Context/ThemeContext'
 
 const App = () => {
+  const { theme } = useTheme()
   return (
-    <div className='canvas'>
-      <GlobalStyles />
-      <div>Header</div>
-      <TypingBox/>
-      <div>Footer</div>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className='canvas'>
+        <GlobalStyles />
+        <div>Header</div>
+        <TypingBox />
+        <Footer />
+      </div>
+    </ThemeProvider>
   )
 }
 

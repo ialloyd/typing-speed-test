@@ -1,10 +1,16 @@
 import React, { createRef, useEffect, useMemo, useRef, useState } from 'react'
 import { generate } from "random-words";
+import UpperMenu from './UpperMenu';
+import { useTestMode } from '../Context/TestModeContext';
 
 const TypingBox = () => {
 
-    const inputRef = useRef(null)
-
+    const inputRef = useRef(null);
+    const { testTime } = useTestMode()
+    const [countDown, setCountDown] = useState(testTime)
+    const [intervalId, setIntervalId] = useState(null)
+    const [testStart, setTestStart] = useState(false)
+    const [testEnd, setTestEnd] = useState(false)
     const [wordsArray, setWordsArray] = useState(() => {
         return generate(50);
     })
@@ -16,7 +22,56 @@ const TypingBox = () => {
         return Array(wordsArray.length).fill(0).map(ele => createRef(null))
     }, [wordsArray])
 
+    const startTimer = () => {
+
+        const intervalId = setInterval(timer, 1000);
+        setIntervalId(intervalId)
+
+        function timer() {
+
+            setCountDown(latestCountDown => {
+
+                if (latestCountDown === 1) {
+                    setTestEnd(true)
+                    clearInterval(intervalId)
+                    return 0;
+                }
+                return latestCountDown - 1
+            })
+        }
+    }
+
+    const resetTest = () => {
+
+        clearInterval(intervalId)
+        setCountDown(testTime)
+        setCurrWordIndex(0)
+        setCurrCharIndex(0)
+        setTestStart(false)
+        setTestEnd(false)
+        setWordsArray(generate(50))
+        resetWordSpanRefClassname();
+        focusInput()
+    }
+
+    function resetWordSpanRefClassname() {
+
+        wordsSpanRef.map(ele => {
+
+            Array.from(ele.current.childNodes).map(e => {
+                e.className = ''
+            })
+        })
+
+        wordsSpanRef[0].current.childNodes[0].className = 'current'
+    }
+
     function handleUserInput(e) {
+
+        if (!testStart) {
+            startTimer()
+            setTestStart(true)
+        }
 
         const allCurrChars = wordsSpanRef[currWordIndex].current.childNodes;
 
@@ -46,7 +101,17 @@ const TypingBox = () => {
 
                 if (allCurrChars.length === currCharIndex) {
 
-                    allCurrChars[currCharIndex - 1].className = 'current'
+                    if (allCurrChars[currCharIndex - 1].className.includes('extra')) {
+                        allCurrChars[currCharIndex - 1].remove();
+                        allCurrChars[currCharIndex - 2].className += ' current-right'
+
+                    }
+                    else {
+
+                        allCurrChars[currCharIndex - 1].className = 'current'
+
+                    }
+
                     setCurrCharIndex(currCharIndex - 1)
                     return
 
@@ -67,7 +132,7 @@ const TypingBox = () => {
             newSpan.className = 'incorrect extra current-right'
             allCurrChars[currCharIndex - 1].classList.remove('current-right');
             wordsSpanRef[currWordIndex].current.append(newSpan)
-            setCurrCharIndex(currCharIndex+1)
+            setCurrCharIndex(currCharIndex + 1)
 
             return;
 
@@ -104,6 +169,10 @@ const TypingBox = () => {
     }
 
     useEffect(() => {
+        resetTest()
+    }, [testTime])
+
+    useEffect(() => {
 
         focusInput();
         wordsSpanRef[0].current.childNodes[0].className = 'current';
@@ -112,7 +181,8 @@ const TypingBox = () => {
 
     return (
         <div>
-            <div className='type-box' onClick={focusInput}>
+            <UpperMenu countDown={countDown} />
+            {testEnd ? <h1>TestOver</h1> : <div className='type-box' onClick={focusInput}>
                 <div className='words'>
                     {
                         wordsArray.map((word, index) =>
@@ -124,7 +194,7 @@ const TypingBox = () => {
                         )
                     }
                 </div>
-            </div>
+            </div>}
             <input type='text' className='hidden-input' ref={inputRef} onKeyDown={e => handleUserInput(e)} />
         </div>
     )
