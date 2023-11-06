@@ -6,12 +6,12 @@ const darkTheme = {
     typeBoxText: 'grey'
 }
 
-const redTheme = {
-    label: 'Red',
-    background: 'red',
-    textColor: 'purple',
-    typeBoxText: 'pink'
+const lightTheme = {
+    label: 'Light',
+    background: 'white',
+    textColor: 'black',
+    typeBoxText: 'grey'
 
 }
 
-export const themeOptions = [{ label: 'Dark', value: darkTheme }, { label: 'Red', value: redTheme }]
+export const themeOptions = [{ label: 'Dark', value: darkTheme }, { label: 'Light', value: lightTheme }]

@@ -4,12 +4,10 @@ import { themeOptions } from '../Utils/themeOptions'
 import { useTheme } from '../Context/ThemeContext'
 
 const Footer = () => {
-    const [value, setValue] = useState({})
-    const {setTheme}=useTheme()
+    const { setTheme, theme } = useTheme()
     function handleChange(e) {
-
-        setValue(e.value)
         setTheme(e.value)
+        localStorage.setItem('theme', JSON.stringify(e.value))
     }
 
     return (
@@ -19,10 +17,10 @@ const Footer = () => {
             </div>
             <div className='themeButton'>
                 <Select
-                    value={value}
                     onChange={handleChange}
                     options={themeOptions}
                     menuPlacement='top'
+                    defaultValue={{ label: theme.label, value: theme }}
                 />
             </div>
         </div>
