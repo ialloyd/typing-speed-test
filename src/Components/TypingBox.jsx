@@ -46,6 +46,7 @@ const TypingBox = () => {
                 })
 
                 if (latestCountDown === 1) {
+                    inputRef.current.blur()
                     setTestEnd(true)
                     clearInterval(intervalId)
                     return 0;

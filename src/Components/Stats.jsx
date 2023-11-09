@@ -1,5 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Graph from './Graph'
+import { toast } from 'react-toastify';
+import { auth, db } from '../firebaseConfig';
+
 
 const Stats = ({ wpm,
     accuracy,
@@ -8,16 +11,87 @@ const Stats = ({ wpm,
     missedChars,
     extraChars,
     graphData }) => {
-    
-    let timeSet=new Set();
-    const newGraph =graphData.filter(i=>{
 
-        if(!timeSet.has(i[0])){
+    let timeSet = new Set();
+    const newGraph = graphData.filter(i => {
+
+        if (!timeSet.has(i[0])) {
             timeSet.add(i[0])
             return i;
         }
     })
-    
+
+    function pushDataToDB() {
+
+        if(isNaN(accuracy)){
+            toast.error('invalid test', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            return;
+        }
+
+        const resultsRef = db.collection('Results');
+        const { uid } = auth.currentUser;
+        resultsRef.add({
+            wpm: wpm,
+            accuracy: accuracy,
+            timeStamp: new Date(),
+            characters: `${correctChars}/${incorrectChars}/${missedChars}/${extraChars}`,
+            userId: uid
+        }).then(res => {
+
+            toast.success('Data saved to db', {
+                position: 'top-right',
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'dark'
+            })
+
+        }).catch(err => {
+            toast.error('not able to save result', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+
+        })
+    }
+
+    useEffect(() => {
+        if (auth.currentUser) {
+            pushDataToDB()
+        }
+        else {
+
+            toast.warning('login to save results', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        }
+    }, [])
+
     return (
         <div className='stats-box'>
             <div className='left-stats'>

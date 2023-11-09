@@ -1,20 +1,22 @@
 import React from 'react'
 import { GlobalStyles } from './Styles/global'
-import TypingBox from './Components/TypingBox'
-import Footer from './Components/Footer'
 import { ThemeProvider } from 'styled-components'
 import { useTheme } from './Context/ThemeContext'
+import { ToastContainer } from 'react-toastify'
+import { Routes, Route } from 'react-router-dom'
+import HomePage from './Pages/HomePage'
+import UserPage from './Pages/UserPage'
 
 const App = () => {
   const { theme } = useTheme()
   return (
     <ThemeProvider theme={theme}>
-      <div className='canvas'>
-        <GlobalStyles />
-        <div>Header</div>
-        <TypingBox />
-        <Footer />
-      </div>
+      <ToastContainer />
+      <GlobalStyles />
+      <Routes>
+        <Route path='/' element={<HomePage />} />
+        <Route path='/user' element={<UserPage />} />
+      </Routes>
     </ThemeProvider>
   )
 }
